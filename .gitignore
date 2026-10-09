@@ -1,0 +1,6 @@
+/.qtcreator
+/.venv
+/.vscode
+/build
+/deprecated
+/python_worker

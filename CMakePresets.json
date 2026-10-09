@@ -1,0 +1,29 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "qt-mingw-debug",
+      "displayName": "Qt MinGW Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/qt-mingw-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "IBKR_ENABLE_TWS_API": "ON",
+        "IBKR_TWS_API_ROOT": "C:/TWS API",
+        "CMAKE_PREFIX_PATH": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug",
+        "absl_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/absl",
+        "protobuf_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/protobuf",
+        "utf8_range_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/utf8_range",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "qt-mingw-debug",
+      "configurePreset": "qt-mingw-debug"
+    }
+  ]
+}

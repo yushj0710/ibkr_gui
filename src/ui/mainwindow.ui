@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1380</width>
+    <height>820</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>IBKR Options Desk</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainLayout">
+    <property name="leftMargin">
+     <number>16</number>
+    </property>
+    <property name="topMargin">
+     <number>12</number>
+    </property>
+    <property name="rightMargin">
+     <number>16</number>
+    </property>
+    <property name="bottomMargin">
+     <number>16</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="accountHeader">
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <layout class="QHBoxLayout" name="accountHeaderLayout">
+       <property name="leftMargin">
+        <number>14</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>14</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="accountLabel">
+         <property name="text">
+          <string>Account: --</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="dataStateLabel">
+         <property name="text">
+          <string>Data: Unavailable</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="headerSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Policy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="netLiquidationLabel">
+         <property name="minimumSize">
+          <size>
+           <width>130</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Net liquidation
+--</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="buyingPowerLabel">
+         <property name="minimumSize">
+          <size>
+           <width>130</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Buying power
+--</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="excessLiquidityLabel">
+         <property name="minimumSize">
+          <size>
+           <width>130</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Excess liquidity
+--</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="smaLabel">
+         <property name="minimumSize">
+          <size>
+           <width>130</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>SMA
+    --</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabs">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="equitiesPage">
+       <attribute name="icon">
+        <iconset theme="QIcon::ThemeIcon::AddressBookNew"/>
+       </attribute>
+       <attribute name="title">
+        <string>Equities</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="equitiesLayout">
+        <item>
+         <widget class="QLabel" name="portfolioNotice">
+          <property name="text">
+           <string>Double-click a row to prepare a close ticket. Earnings date is editable. Connect to populate positions.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableView" name="equityView">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::EditTrigger::DoubleClicked</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="optionsPage">
+       <attribute name="icon">
+        <iconset theme="QIcon::ThemeIcon::AppointmentNew"/>
+       </attribute>
+       <attribute name="title">
+        <string>Options</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="optionsLayout">
+        <item>
+         <layout class="QHBoxLayout" name="optionsToolbar">
+          <item>
+           <widget class="QPushButton" name="optionStatisticsButton">
+            <property name="text">
+             <string>Expiry P&amp;L</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="optionsSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Policy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="optionNotice">
+          <property name="text">
+           <string>Double-click a leg to prepare a close ticket. Right-click selected legs to group them, or right-click a strategy to ungroup it.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="optionView">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="watchlistsPage">
+       <attribute name="icon">
+        <iconset theme="QIcon::ThemeIcon::CallStart"/>
+       </attribute>
+       <attribute name="title">
+        <string>Watchlists</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="watchlistsLayout">
+        <item>
+         <layout class="QHBoxLayout" name="watchlistsToolbar">
+          <item>
+           <widget class="QLabel" name="globalExpectedRateLabel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Global expected rate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="globalExpectedRateBox">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>5.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="globalSidesBox">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="globalExpiryDateLabel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Expiry date</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="globalExpiryDateEdit">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="displayFormat">
+             <string>yyyy-MM-dd</string>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="refreshOptionsButton">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Refresh options</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="watchlistsSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Policy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="portfolioNotice2">
+          <property name="text">
+           <string>Set global rules and refresh qualifying contracts, or customize a symbol. Expand an underlying to view options.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="watchlistView">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <attribute name="headerCascadingSectionResizes">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tradeRecordsPage">
+       <attribute name="icon">
+        <iconset theme="QIcon::ThemeIcon::CallStop"/>
+       </attribute>
+       <attribute name="title">
+        <string>Trade records</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="tradeRecordsLayout">
+        <item>
+         <widget class="QPushButton" name="tradeStatisticsButton">
+          <property name="text">
+           <string>Realized P&amp;L</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tradesPage">
+          <widget class="QWidget" name="equityTradesPage">
+           <attribute name="title">
+            <string>Equities</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="equityTradesLayout">
+            <item>
+             <widget class="QTableView" name="equityTradesView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="optionTradesPage">
+           <attribute name="title">
+            <string>Options</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="optionTradesLayout">
+            <item>
+             <widget class="QTableView" name="optionTradesView"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1380</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <addaction name="connectAction"/>
+   <addaction name="showTodayLogAction"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="sessionToolBar">
+   <property name="windowTitle">
+    <string>Session</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="connectAction">
+   <property name="text">
+    <string>Connect</string>
+   </property>
+  </action>
+  <action name="showTodayLogAction">
+   <property name="text">
+    <string>Open Log</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
