@@ -769,8 +769,9 @@ class IbkrSession::Impl {
     if (subscription.requestId != 0) return;
     subscription.requestId = nextRequestId++;
     marketRequestContracts.insert(subscription.requestId, conId);
-    client.reqMktData(subscription.requestId, *contract, "", false, false,
-                      nullptr);
+    const std::string genericTicks = contract->secType == "OPT" ? "106" : "";
+    client.reqMktData(subscription.requestId, *contract, genericTicks, false,
+              false, nullptr);
   }
 
   void releaseMarketData(qint64 conId, const QString& owner) {
