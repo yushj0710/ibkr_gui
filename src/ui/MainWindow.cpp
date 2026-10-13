@@ -462,6 +462,11 @@ MainWindow::MainWindow(QWidget* parent)
                                                removeButtonDelegate);
   ui_->watchlistView->setColumnWidth(WatchlistTreeModel::Remove, 48);
   ui_->watchlistView->setColumnWidth(WatchlistTreeModel::Contract, 230);
+  connect(ui_->watchlistView, &QTreeView::clicked, this,
+          [this](const QModelIndex& index) {
+            if (watchlist_.flags(index).testFlag(Qt::ItemIsEditable))
+              ui_->watchlistView->edit(index);
+          });
   connect(ui_->watchlistView, &QTreeView::doubleClicked, this,
           &MainWindow::handleWatchlistDoubleClick);
   connect(ui_->watchlistView, &QTreeView::expanded, this,
@@ -589,10 +594,7 @@ void MainWindow::handleWatchlistClick(const QModelIndex& index) {
 
 void MainWindow::handleWatchlistDoubleClick(const QModelIndex& index) {
   if (!index.isValid()) return;
-  if (watchlist_.isAddRow(index)) {
-    if (index.column() == WatchlistTreeModel::Contract)
-      ui_->watchlistView->edit(index);
-  } else if (watchlist_.isOption(index)) {
+  if (watchlist_.isOption(index)) {
     showOptionOpenTicket(index);
   }
 }
@@ -804,24 +806,6 @@ void MainWindow::showOptionContextMenu(const QPoint& position) {
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
-  if (watched == ui_->watchlistView->viewport() &&
-      event->type() == QEvent::MouseMove) {
-    const auto* mouse = static_cast<QMouseEvent*>(event);
-    const QModelIndex index = ui_->watchlistView->indexAt(mouse->pos());
-    const bool editable =
-        index.isValid() && !watchlist_.isOption(index) &&
-        !watchlist_.isAddRow(index) &&
-        (index.column() == WatchlistTreeModel::ExpectedChange ||
-         index.column() == WatchlistTreeModel::Sides ||
-         index.column() == WatchlistTreeModel::Expiry ||
-         index.column() == WatchlistTreeModel::Rule);
-    if (editable && index != hoveredWatchlistIndex_) {
-      hoveredWatchlistIndex_ = index;
-      ui_->watchlistView->edit(index);
-    } else if (!editable) {
-      hoveredWatchlistIndex_ = QPersistentModelIndex();
-    }
-  }
   if (event->type() == QEvent::MouseButtonPress) {
     const auto* mouse = static_cast<QMouseEvent*>(event);
     if (mouse->button() == Qt::LeftButton) {

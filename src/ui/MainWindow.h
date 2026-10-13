@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QPersistentModelIndex>
 #include <QSet>
 
 #include "ibkr/IbkrSession.h"
@@ -56,6 +55,5 @@ class MainWindow final : public QMainWindow {
   Ui::MainWindow* ui_;
   QLabel* connectionStateLabel_ = nullptr;
   QHash<QString, QLabel*> indexLabels_;
-  QPersistentModelIndex hoveredWatchlistIndex_;
   QSet<QString> expandedWatchlistsAwaitingQuote_;
 };
