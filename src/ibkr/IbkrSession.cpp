@@ -178,16 +178,10 @@ class IbkrSession::Impl {
           else if (field == LAST || field == MARK_PRICE ||
                    field == DELAYED_LAST)
             subscription->last = price;
-          else if (field == OPEN || field == DELAYED_OPEN)
-            subscription->open = price;
-          else if (field == CLOSE || field == DELAYED_CLOSE)
-            subscription->close = price;
           displayPrice = subscription->last;
           if (displayPrice <= 0.0 && subscription->bid > 0.0 &&
               subscription->ask > 0.0)
             displayPrice = (subscription->bid + subscription->ask) / 2.0;
-          if (displayPrice <= 0.0) displayPrice = subscription->close;
-          if (displayPrice <= 0.0) displayPrice = subscription->open;
           hasDisplayPrice = displayPrice > 0.0;
         }
         isWatchlistSymbol = session_.impl_->watchlistSymbols.contains(conId);
@@ -321,38 +315,49 @@ class IbkrSession::Impl {
 
     void historicalData(int requestId, const Bar& bar) override {
       if (bar.close <= 0.0) return;
+      const QDate date =
+          QDate::fromString(QString::fromStdString(bar.time), "yyyyMMdd");
       ActivityLog::ibkrResponse("historical_bar",
                                 {{"request_id", requestId},
                                  {"date", QString::fromStdString(bar.time)},
                                  {"close", bar.close}});
+      if (!date.isValid()) return;
       std::scoped_lock lock(session_.impl_->subscriptionMutex);
       if (session_.impl_->historicalRequestContracts.contains(requestId)) {
-        session_.impl_->historicalCloses[requestId].append(bar.close);
+        session_.impl_->historicalCloses[requestId].append({date, bar.close});
       }
     }
 
     void historicalDataEnd(int requestId, const std::string&,
                            const std::string&) override {
       qint64 conId = 0;
-      QVector<double> closes;
+      QVector<Impl::HistoricalBar> bars;
       {
         std::scoped_lock lock(session_.impl_->subscriptionMutex);
         conId = session_.impl_->historicalRequestContracts.take(requestId);
         session_.impl_->historicalRequestsByContract.remove(conId);
-        closes = session_.impl_->historicalCloses.take(requestId);
+        bars = session_.impl_->historicalCloses.take(requestId);
       }
-      if (conId == 0 || closes.size() < 2) return;
-      const double current = closes.last();
-      const double prior = closes.at(closes.size() - 2);
-      const int fiveDayIndex = qMax(0, closes.size() - 6);
-      const double fiveDaysAgo = closes.at(fiveDayIndex);
-      const double today = prior > 0.0 ? (current / prior - 1.0) * 100.0 : 0.0;
+      if (conId == 0 || bars.isEmpty()) return;
+      const QDate today = QDate::currentDate();
+      int previousCloseIndex = bars.size() - 1;
+      while (previousCloseIndex >= 0 &&
+             bars.at(previousCloseIndex).date >= today)
+        --previousCloseIndex;
+      if (previousCloseIndex < 0) return;
+      const double previousClose = bars.at(previousCloseIndex).close;
+      const int fiveDayIndex = qMax(0, previousCloseIndex - 5);
+      const double fiveDaysAgo = bars.at(fiveDayIndex).close;
+      const double latestClose = bars.at(previousCloseIndex).close;
       const double fiveDays =
-          fiveDaysAgo > 0.0 ? (current / fiveDaysAgo - 1.0) * 100.0 : 0.0;
+          fiveDaysAgo > 0.0
+              ? (latestClose / fiveDaysAgo - 1.0) * 100.0
+              : 0.0;
       QMetaObject::invokeMethod(
           &session_,
-          [this, conId, today, fiveDays] {
-            emit session_.watchlistPerformanceUpdated(conId, today, fiveDays);
+          [this, conId, previousClose, fiveDays] {
+            emit session_.watchlistHistoryUpdated(conId, previousClose,
+                                                  fiveDays);
           },
           Qt::QueuedConnection);
     }
@@ -712,7 +717,9 @@ class IbkrSession::Impl {
     double bid = 0.0;
     double ask = 0.0;
     double last = 0.0;
-    double open = 0.0;
+  };
+  struct HistoricalBar {
+    QDate date;
     double close = 0.0;
   };
   QHash<qint64, std::shared_ptr<Contract>> contracts;
@@ -728,7 +735,7 @@ class IbkrSession::Impl {
   QHash<qint64, double> indexOpens;
   QHash<qint64, double> indexPrices;
   QHash<int, qint64> historicalRequestContracts;
-  QHash<int, QVector<double>> historicalCloses;
+  QHash<int, QVector<HistoricalBar>> historicalCloses;
   QHash<qint64, int> historicalRequestsByContract;
   struct OptionChainRequest {
     QString symbol;

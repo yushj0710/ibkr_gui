@@ -43,8 +43,8 @@ class WatchlistTreeModel final : public QAbstractItemModel {
   void replaceEntries(QList<WatchlistEntry> entries);
   void addQualifiedSymbol(QString symbol, qint64 conId);
   void updateQuote(qint64 conId, double marketPrice);
-  void updatePerformance(qint64 conId, double todayChangePercent,
-                         double fiveDayChangePercent);
+  void updateHistory(qint64 conId, double previousClose,
+                     double fiveDayChangePercent);
   void replaceOptions(const QString& symbol, QList<OptionCandidate> candidates);
   void updateCandidate(const OptionCandidate& candidate);
   [[nodiscard]] WatchlistEntry entryAt(int row) const;
@@ -69,6 +69,7 @@ class WatchlistTreeModel final : public QAbstractItemModel {
  private:
   struct EntryState {
     WatchlistEntry entry;
+    double previousClose = 0.0;
     QList<OptionCandidate> options;
     bool optionsLoaded = false;
   };

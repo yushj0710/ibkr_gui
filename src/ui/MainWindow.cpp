@@ -328,8 +328,8 @@ MainWindow::MainWindow(QWidget* parent)
               break;
             }
           });
-  connect(&session_, &IbkrSession::watchlistPerformanceUpdated, &watchlist_,
-          &WatchlistTreeModel::updatePerformance);
+    connect(&session_, &IbkrSession::watchlistHistoryUpdated, &watchlist_,
+      &WatchlistTreeModel::updateHistory);
   connect(&session_, &IbkrSession::optionCandidateUpdated, &watchlist_,
           &WatchlistTreeModel::updateCandidate);
   connect(&session_, &IbkrSession::tradeRecordReceived, this,

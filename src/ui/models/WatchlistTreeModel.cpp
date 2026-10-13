@@ -66,6 +66,7 @@ QVariant WatchlistTreeModel::data(const QModelIndex& modelIndex,
       return {};
     }
     const auto& entry = entries_.at(modelIndex.row()).entry;
+    const auto& state = entries_.at(modelIndex.row());
     if (modelIndex.column() == Remove && role == Qt::ForegroundRole)
       return QColor("#b42318");
     if (role == Qt::ForegroundRole && (modelIndex.column() == TodayChange ||
@@ -96,7 +97,9 @@ QVariant WatchlistTreeModel::data(const QModelIndex& modelIndex,
         return entry.marketPrice > 0.0 ? currency(entry.marketPrice)
                                        : QString("--");
       case TodayChange:
-        return percentage(entry.todayChangePercent);
+        return entry.marketPrice > 0.0 && state.previousClose > 0.0
+                   ? percentage(entry.todayChangePercent)
+                   : QString("--");
       case FiveDayChange:
         return percentage(entry.fiveDayChangePercent);
       case ExpectedChange:
@@ -281,21 +284,30 @@ void WatchlistTreeModel::addQualifiedSymbol(QString symbol, qint64 conId) {
 
 void WatchlistTreeModel::updateQuote(qint64 conId, double marketPrice) {
   for (int row = 0; row < entries_.size(); ++row) {
-    if (entries_[row].entry.conId == conId) {
-      entries_[row].entry.marketPrice = marketPrice;
+    auto& state = entries_[row];
+    if (state.entry.conId == conId) {
+      state.entry.marketPrice = marketPrice;
+      state.entry.todayChangePercent =
+          marketPrice > 0.0 && state.previousClose > 0.0
+              ? (marketPrice / state.previousClose - 1.0) * 100.0
+              : 0.0;
       emit dataChanged(index(row, CurrentOrTarget), index(row, ExpectedChange));
       return;
     }
   }
 }
 
-void WatchlistTreeModel::updatePerformance(qint64 conId,
-                                           double todayChangePercent,
-                                           double fiveDayChangePercent) {
+void WatchlistTreeModel::updateHistory(qint64 conId, double previousClose,
+                                       double fiveDayChangePercent) {
   for (int row = 0; row < entries_.size(); ++row) {
-    if (entries_[row].entry.conId == conId) {
-      entries_[row].entry.todayChangePercent = todayChangePercent;
-      entries_[row].entry.fiveDayChangePercent = fiveDayChangePercent;
+    auto& state = entries_[row];
+    if (state.entry.conId == conId) {
+      state.previousClose = previousClose;
+      state.entry.todayChangePercent =
+          state.entry.marketPrice > 0.0 && previousClose > 0.0
+              ? (state.entry.marketPrice / previousClose - 1.0) * 100.0
+              : 0.0;
+      state.entry.fiveDayChangePercent = fiveDayChangePercent;
       emit dataChanged(index(row, TodayChange), index(row, FiveDayChange));
       return;
     }

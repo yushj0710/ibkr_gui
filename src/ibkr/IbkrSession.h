@@ -64,8 +64,8 @@ class IbkrSession final : public QObject {
   void watchlistContractQualified(QString symbol, qint64 conId);
   void watchlistContractRejected(QString symbol, QString reason);
   void watchlistQuoteUpdated(qint64 conId, double marketPrice);
-  void watchlistPerformanceUpdated(qint64 conId, double todayChangePercent,
-                                   double fiveDayChangePercent);
+  void watchlistHistoryUpdated(qint64 conId, double previousClose,
+                               double fiveDayChangePercent);
   void watchlistOptionsReady(QString symbol, QList<OptionCandidate> candidates);
   void optionCandidateUpdated(OptionCandidate candidate);
   void tradeRecordReceived(TradeRecord record);
