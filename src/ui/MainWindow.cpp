@@ -515,6 +515,7 @@ void MainWindow::showConnectionDialog() {
                              {"host", profile.host},
                              {"port", profile.port},
                              {"client_id", profile.clientId}});
+    accountSelectionHandled_ = false;
     session_.configureConnection(profile);
   }
 }
@@ -660,6 +661,8 @@ void MainWindow::showOptionOpenTicket(const QModelIndex& index) {
 }
 
 void MainWindow::selectAccount(const QStringList& accounts) {
+  if (accountSelectionHandled_) return;
+  accountSelectionHandled_ = true;
   if (accounts.isEmpty()) {
     statusBar()->showMessage("IBKR returned no managed accounts.");
     return;

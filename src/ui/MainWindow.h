@@ -56,4 +56,5 @@ class MainWindow final : public QMainWindow {
   QLabel* connectionStateLabel_ = nullptr;
   QHash<QString, QLabel*> indexLabels_;
   QSet<QString> expandedWatchlistsAwaitingQuote_;
+  bool accountSelectionHandled_ = false;
 };
