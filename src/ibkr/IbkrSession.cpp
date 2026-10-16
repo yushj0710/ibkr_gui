@@ -187,9 +187,17 @@ class IbkrSession::Impl {
         isWatchlistSymbol = session_.impl_->watchlistSymbols.contains(conId);
         candidate = session_.impl_->optionCandidatesByConId.value(conId);
         if (candidate.conId != 0) {
-          if (field == BID || field == DELAYED_BID) candidate.bid = price;
-          if (field == ASK || field == DELAYED_ASK) candidate.ask = price;
-          candidate.quoteStatus = "Live quote";
+          if (field == BID || field == DELAYED_BID) {
+            candidate.bid = price;
+            candidate.quoteStatus = "Live quote";
+          } else if (field == ASK || field == DELAYED_ASK) {
+            candidate.ask = price;
+            candidate.quoteStatus = "Live quote";
+          } else if (field == LAST || field == DELAYED_LAST ||
+                     field == MARK_PRICE) {
+            candidate.lastPrice = price;
+            candidate.quoteStatus = "Live quote";
+          }
           session_.impl_->optionCandidatesByConId.insert(conId, candidate);
         }
       }
@@ -392,41 +400,46 @@ class IbkrSession::Impl {
           selectedExpiry = expiry;
         }
       }
-      const QList<double> targets =
+      struct StrikeTarget {
+        double price;
+        QString right;
+      };
+      const double move = request.expectedChange / 100.0;
+      const QList<StrikeTarget> targets =
           request.showBothSides
-              ? QList<double>{request.marketPrice *
-                                  (1.0 - request.expectedChange / 100.0),
-                              request.marketPrice *
-                                  (1.0 + request.expectedChange / 100.0)}
-              : QList<double>{request.marketPrice *
-                              (1.0 + (request.todayChange >= 0.0
-                                          ? request.expectedChange
-                                          : -request.expectedChange) /
-                                         100.0)};
+              ? QList<StrikeTarget>{{request.marketPrice * (1.0 - move),
+                                     "P"},
+                                    {request.marketPrice * (1.0 + move),
+                                     "C"}}
+              : request.todayChange >= 0.0
+                    ? QList<StrikeTarget>{{request.marketPrice * (1.0 + move),
+                                           "C"}}
+                    : QList<StrikeTarget>{{request.marketPrice * (1.0 - move),
+                                           "P"}};
       for (const double strike : strikes) {
-        for (const double target : targets) {
-          if (target <= 0.0 || qAbs(strike - target) / target > 0.05) continue;
-          if (!request.showBothSides &&
-              ((request.todayChange >= 0.0 && strike <= request.marketPrice) ||
-               (request.todayChange < 0.0 && strike >= request.marketPrice)))
+        for (const auto& target : targets) {
+          if (target.price <= 0.0) continue;
+          const bool outsideRate =
+              target.right == "C"
+                  ? strike >= target.price && strike <= target.price * 1.05
+                  : strike <= target.price && strike >= target.price * 0.95;
+          if (!outsideRate)
             continue;
           if (selectedExpiry.isValid()) {
             const QString expiryValue = selectedExpiry.toString("yyyyMMdd");
             const QDate expiry = selectedExpiry;
-            for (const QString& right : {QString("C"), QString("P")}) {
-              const QString key = expiryValue + "|" +
-                                  QString::number(strike, 'f', 4) + "|" + right;
-              if (session_.impl_->optionCandidateKeys[requestId].contains(key))
-                continue;
-              session_.impl_->optionCandidateKeys[requestId].insert(key);
-              session_.impl_->optionCandidates[requestId].append({
-                  .underlying = request.symbol,
-                  .expiry = expiry,
-                  .strike = strike,
-                  .right = right,
-                  .expectedPrice = target,
-              });
-            }
+            const QString key = expiryValue + "|" +
+                                QString::number(strike, 'f', 4) + "|" +
+                                target.right;
+            if (session_.impl_->optionCandidateKeys[requestId].contains(key))
+              continue;
+            session_.impl_->optionCandidateKeys[requestId].insert(key);
+            session_.impl_->optionCandidates[requestId].append({
+                .underlying = request.symbol,
+                .expiry = expiry,
+                .strike = strike,
+                .right = target.right,
+            });
           }
         }
       }

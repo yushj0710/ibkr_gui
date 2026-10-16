@@ -55,7 +55,7 @@ struct OptionCandidate {
   QDate expiry;
   double strike = 0.0;
   QString right;
-  double expectedPrice = 0.0;
+  double lastPrice = 0.0;
   double bid = 0.0;
   double ask = 0.0;
   double expectedQuantity = 1.0;

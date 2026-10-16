@@ -135,8 +135,8 @@ QVariant WatchlistTreeModel::data(const QModelIndex& modelIndex,
                QString::number(option.strike, 'f', 2),
                option.right == "C" ? "Call" : "Put");
     case CurrentOrTarget:
-      return option.expectedPrice > 0.0 ? currency(option.expectedPrice)
-                                        : QString("--");
+      return option.lastPrice > 0.0 ? currency(option.lastPrice)
+                                    : QString("--");
     case Bid:
       return option.bid > 0.0 ? currency(option.bid) : QString("--");
     case Ask:
