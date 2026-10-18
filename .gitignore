@@ -3,4 +3,6 @@
 /.vscode
 /build
 /deprecated
-/python_worker
+__pycache__/
+*.pyc
+CMakeUserPresets.json
