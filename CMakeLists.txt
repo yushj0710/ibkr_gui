@@ -14,7 +14,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 # add C:\Qt to CMAKE_PREFIX_PATH if Qt is installed there
-set(CMAKE_PREFIX_PATH "C:/Qt/6.11.2/mingw_64")
+# set(CMAKE_PREFIX_PATH "C:/Qt/6.11.2/mingw_64")
+# point CMAKE_PREFIX_PATH to the Qt installation, e.g. in CMakeUserPresets.json
 find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets Sql)
 
 qt_standard_project_setup()
@@ -62,9 +63,8 @@ target_include_directories(ibkr_options_gui PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}
 
 if(IBKR_ENABLE_TWS_API)
     set(IBKR_TWS_CLIENT_DIR "${IBKR_TWS_API_ROOT}/source/cppclient/client")
-    set(IBKR_DECIMAL_LIBRARY "C:/Users/Administrator/Documents/GitHub/vcpkg/installed/x64-mingw-static/lib/libintel_decimal128.a"
-        CACHE FILEPATH "Intel decimal floating-point library required by the TWS API")
-    if(NOT EXISTS "${IBKR_DECIMAL_LIBRARY}")
+    find_library(IBKR_DECIMAL_LIBRARY NAMES intel_decimal128 libintel_decimal128.a bid DOC "Intel decimal floating-point library required by TWS API")
+    if(NOT IBKR_DECIMAL_LIBRARY OR NOT EXISTS "${IBKR_DECIMAL_LIBRARY}")
         message(FATAL_ERROR "Set IBKR_DECIMAL_LIBRARY to libintel_decimal128.a from intelrdfpmathlib.")
     endif()
     find_package(absl CONFIG REQUIRED)

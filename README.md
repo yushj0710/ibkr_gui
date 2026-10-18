@@ -18,9 +18,13 @@ Watchlist symbols are validated by IBKR before they are shown. Expanding a quote
 
 ## Build
 
+Machine-specific paths (compiler, Qt, Protobuf, TWS API, Intel decimal library) are not committed.
+Copy `CMakeUserPresets.example.json` to `CMakeUserPresets.json`, adjust the paths for your machine.
+then:
+
 ```powershell
-cmake --preset qt-mingw-debug
-cmake --build --preset qt-mingw-debug
+cmake --preset local-debug
+cmake --build --preset local-debug
 ```
 
 Run the generated `ibkr_options_gui` executable from the selected build configuration.

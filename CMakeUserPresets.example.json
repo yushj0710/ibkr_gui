@@ -1,0 +1,27 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "local-debug",
+            "inherits": "qt-mingw-debug",
+            "displayName": "Local Debug",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+                "CMAKE_PREFIX_PATH": "C:/Qt/6.11.2/mingw_64;<protobuf-5.29.5-install-dir>",
+                "IBKR_TWS_API_ROOT": "C:/TWS API",
+                "absl_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/absl",
+                "protobuf_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/protobuf",
+                "utf8_range_DIR": "D:/projects/dependencies/protobuf-5.29.5-mingw-debug/lib/cmake/utf8_range",
+                "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/Ninja/ninja.exe",
+                "IBKR_DECIMAL_LIBRARY": "<vcpkg-root>/installed/x64-mingw-static/lib/libintel_decimal128.a"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "local-debug",
+            "configurePreset": "local-debug"
+        }
+    ]
+}
