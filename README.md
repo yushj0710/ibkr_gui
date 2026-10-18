@@ -51,3 +51,11 @@ Every order must receive an IBKR what-if preview and requires an explicit confir
 2. Select the returned managed account and verify account metrics and positions populate.
 3. Add a market-data-entitled stock to a watchlist, then double-click `Show options...` after a quote arrives.
 4. Confirm candidate quotes and what-if margin results appear. Use a bid or ask button to inspect the prefilled ticket, request a fresh preview, then cancel it.
+
+## Project history
+
+This project was developed locally and first published to GitHub in October 2026, so the commit history starts at this point.
+
+## License
+
+Released under the MIT License.
