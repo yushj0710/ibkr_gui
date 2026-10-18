@@ -1122,6 +1122,7 @@ void IbkrSession::disconnect() {
   if (impl_ && impl_->readerThread.joinable()) {
     impl_->readerThread.request_stop();
     impl_->client.eDisconnect();
+    impl_->signal.issueSignal();
     impl_->readerThread.join();
     impl_->reader.reset();
   } else if (impl_) {
